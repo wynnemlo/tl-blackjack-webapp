@@ -1,0 +1,9 @@
+<% if @broke %>
+	<h3>Sorry, you're broke!</h3>
+<% else %>
+	<h3>Had fun?</h3>
+<% end %>
+
+<h4>Thanks for playing! You started with $500 and you are now leaving with $<%= session[:cash].to_s %>. Isn't life exciting?</h4>
+
+<p>Game coded by <a href="http://www.wynnelo.com">Wynne Lo</a> for <a href="http://www.gotealeaf.com/">Tealeaf</a>.</p>

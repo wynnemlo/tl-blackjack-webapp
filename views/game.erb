@@ -1,0 +1,73 @@
+<div id="game">
+  <%if @loser %>
+    <div class="alert alert-error"><%=@loser%></div>
+  <% end %>
+  <%if @winner %>
+    <div class="alert alert-success"><%=@winner%></div>
+  <% end %>
+  <% if @play_again %>
+  <h5>
+    <div id="play_again">
+    Play again?
+      <form class="play_again form-inline" method="post" action="/play_again">
+        <input type="submit" name="yes" value="Yes" class="btn btn-primary"></button>
+        <input type="submit" name="no" value="No" class="btn btn-default"></button>
+      </form>
+    </div>
+  </h5>
+  <% else %>
+    <h4>
+      <%= 'Hi ' + session[:username] + '! You\'ve bet $' + session[:bet_amt].to_s + '. Let\'s play Blackjack!' %>
+    </h4>
+  <% end %>
+
+  <div class="well">
+    <h4>Dealer's Cards:</h4>
+    <% session[:dealercards].each_with_index do |card, i| %>
+    <!-- if it's player's turn, don't show dealer's first card -->
+      <% if session[:turn] == 'player' && i == 0 %>
+        <img src="/images/cards/cover.jpg" border="0">
+      <% else %>
+        <%= to_image(card) %>
+      <% end %>
+    <% end %>
+    <!-- button to reveal dealer cards -->
+    <% if @show_dealer_btn %>
+      <h5>Dealer has <%= total_value(session[:dealercards]) %> and will hit.
+      <form id="dealer_hit_form" action="/game/dealer/hit" method="post">
+        <input type="submit" value="Click to see dealer's next card →" class="btn btn-primary" />
+      </form>
+    <% end %>
+  </div>
+
+  <div class="well">
+    <h4><%= session[:username] %>'s Cards:</h4>
+    <% session[:mycards].each do |card| %>
+      <%= to_image(card) %>
+    <% end %>
+  </div>
+
+  <!-- STAY message -->
+  <% if session[:turn] == 'dealer' && !@play_again %>
+    <h5>
+      <%= session[:username] + ' stayed at ' + total_value(session[:mycards]).to_s + '. ' + session[:username] + ' has $' + session[:cash].to_s + ' and bet $' + session[:bet_amt].to_s + ' this round.' %>
+    <h5>
+  <% end %>
+
+  <!-- hit or stay buttons -->
+  <% if @show_hit_or_stay_buttons %>
+    <h4>
+      <%= session[:username] %> has <%= total_value(session[:mycards]) %>. What would <%= session[:username] %> like to do?
+      <small><%= session[:username] + ' has $' + session[:cash].to_s + ' total. Bet amount this round: $' + session[:bet_amt].to_s %>
+      </small>
+    <h4>
+    <p id="action_buttons">
+      <form id="hit_form" action="/game/player/hit" method="post">
+        <input type="submit" value="Hit" class="btn btn-success btn-large"/>
+      </form>
+      <form id="stay_form" action="/game/player/stay" method="post">
+        <input type="submit" value="Stay" class="btn btn-warning btn-large"/>
+      </form>
+    </p>
+  <% end %>
+</div>
